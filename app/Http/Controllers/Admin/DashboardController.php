@@ -9,7 +9,7 @@ use App\Models\User;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index()9999
     {
         $stats = [
             'bookings'  => Booking::count(),
