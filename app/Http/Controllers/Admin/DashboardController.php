@@ -14,7 +14,7 @@ class DashboardController extends Controller
         $stats = [
             'bookings'  => Booking::count(),
             'pending'   => Booking::where('status', 'pending')->count(),
-            'paid'      => Booking::where('status', 'paid')->count(),
+            'paid'      => Booking::where('stastus', 'paid')->count(),
             'revenue'   => Booking::where('status', 'paid')->sum('total_price'),
             'customers' => User::where('role', 'customer')->count(),
             'tours'     => Tour::count(),
