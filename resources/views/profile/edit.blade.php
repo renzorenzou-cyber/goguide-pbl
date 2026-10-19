@@ -7,7 +7,11 @@
     $isAdmin = $user->role === 'admin';
     $accent  = $isAdmin ? '#0f172a' : '#f26522';
     $headBg  = $isAdmin ? '#0f172a' : 'linear-gradient(135deg, #133961 0%, #1e5288 100%)';
-    $backUrl = $isAdmin ? route('admin.dashboard') : route('dashboard');
+    $backUrl = match($user->role) {
+    'admin' => route('admin.dashboard'),
+    'guide' => route('guide.dashboard'),
+    default => route('dashboard'),
+};
 @endphp
 
 <section class="py-10 sm:py-14">
@@ -27,10 +31,11 @@
                 </div>
             @endif
             <div class="min-w-0">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold {{ $isAdmin ? 'bg-white/10 border border-white/20' : 'bg-orange-500' }}">
-                    <i class="fa-solid {{ $isAdmin ? 'fa-user-shield' : 'fa-suitcase-rolling' }}"></i>
-                    {{ $isAdmin ? 'Admin' : 'Customer' }}
-                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold
+             {{ $isAdmin ? 'bg-white/10 border border-white/20' : ($user->role === 'guide' ? 'bg-emerald-600' : 'bg-orange-500') }}">
+    <i class="fa-solid {{ $isAdmin ? 'fa-user-shield' : ($user->role === 'guide' ? 'fa-map-location-dot' : 'fa-suitcase-rolling') }}"></i>
+    {{ $isAdmin ? 'Admin' : ($user->role === 'guide' ? 'Tour Guide' : 'Customer') }}
+</span>
                 <h1 class="text-2xl font-extrabold mt-2 truncate">{{ $user->name }}</h1>
                 <p class="text-sm text-white/70 truncate">{{ $user->email }}</p>
                 <p class="text-xs text-white/50 mt-1">Bergabung sejak {{ $user->created_at->format('d M Y') }}</p>

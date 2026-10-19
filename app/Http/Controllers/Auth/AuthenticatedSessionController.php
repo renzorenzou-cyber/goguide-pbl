@@ -11,6 +11,12 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
+    private const LABELS = [
+        'customer' => 'Customer',
+        'guide'    => 'Guide',
+        'admin'    => 'Admin',
+    ];
+
     public function create(): View
     {
         return view('auth.login', ['mode' => 'login']);
@@ -20,30 +26,32 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        $portal  = $request->input('portal') === 'admin' ? 'admin' : 'customer';
-        $isAdmin = $request->user()->role === 'admin';
+        $chosen = in_array($request->input('portal'), ['admin', 'guide'], true)
+            ? $request->input('portal')
+            : 'customer';
 
-        if ($portal === 'admin' && ! $isAdmin) {
+        $role   = $request->user()->role;
+        $actual = in_array($role, ['admin', 'guide'], true) ? $role : 'customer';
+
+        // Pilihan di form harus cocok dengan role akun
+        if ($chosen !== $actual) {
             Auth::guard('web')->logout();
 
             return back()
                 ->withInput($request->only('email', 'portal', 'form'))
-                ->withErrors(['email' => 'Akun ini bukan akun admin. Pilih "Customer" untuk masuk.']);
-        }
-
-        if ($portal === 'customer' && $isAdmin) {
-            Auth::guard('web')->logout();
-
-            return back()
-                ->withInput($request->only('email', 'portal', 'form'))
-                ->withErrors(['email' => 'Ini akun admin. Pilih "Admin" untuk masuk.']);
+                ->withErrors([
+                    'email' => 'Akun ini terdaftar sebagai ' . self::LABELS[$actual]
+                        . '. Pilih "' . self::LABELS[$actual] . '" untuk masuk.',
+                ]);
         }
 
         $request->session()->regenerate();
 
-        return $isAdmin
-            ? redirect()->intended(route('admin.dashboard'))
-            : redirect()->intended(route('dashboard'));
+        return match ($actual) {
+            'admin' => redirect()->intended(route('admin.dashboard')),
+            'guide' => redirect()->intended(route('guide.dashboard')),
+            default => redirect()->intended(route('dashboard')),
+        };
     }
 
     public function destroy(Request $request): RedirectResponse

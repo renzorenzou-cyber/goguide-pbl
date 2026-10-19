@@ -67,4 +67,9 @@ public function getInitialsAttribute(): string
         ->take(2)
         ->implode('');
 }
+
+public function guide()
+{
+    return $this->hasOne(Guide::class);
+}
 }

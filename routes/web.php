@@ -9,6 +9,7 @@ use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Schedule;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Guide\DashboardController as GuideDashboardController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/tours/{slug}', [TourController::class, 'show'])->name('tours.show');
@@ -23,6 +24,11 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+    
+});
+
+Route::middleware(['auth', 'guide'])->prefix('guide')->name('guide.')->group(function () {
+    Route::get('/', [GuideDashboardController::class, 'index'])->name('dashboard');
 });
 
 Route::middleware('auth')->group(function () {

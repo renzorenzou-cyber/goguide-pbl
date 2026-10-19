@@ -77,7 +77,7 @@
         <div class="gg-actions">
             @auth
     <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('dashboard') }}" class="gg-link">Dashboard</a>
-    @if(auth()->user()->role !== 'admin')
+    @if(auth()->user()->role === 'customer')
         <a href="{{ route('bookings.index') }}" class="gg-link">Booking Saya</a>
     @endif
     <a href="{{ route('profile.edit') }}" class="gg-link" style="display:flex; align-items:center; gap:8px;">

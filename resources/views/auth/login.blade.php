@@ -5,9 +5,21 @@
 @section('content')
 @php
     $mode    = old('form', $mode ?? 'login');
-    $portal  = old('portal') === 'admin' ? 'admin' : 'customer';
+    $portal  = in_array(old('portal'), ['admin', 'guide'], true) ? old('portal') : 'customer';
     $loginErr = old('form') === 'login';
     $regErr   = old('form') === 'register';
+
+    // Foto background: pakai punya lu kalau ada, kalau nggak pakai cadangan
+    $pickBg = function (string $name, string $fallback) {
+        foreach (['jpg', 'jpeg', 'png', 'webp'] as $ext) {
+            if (file_exists(public_path("images/auth/$name.$ext"))) {
+                return asset("images/auth/$name.$ext");
+            }
+        }
+        return asset($fallback);
+    };
+    $bgLogin    = $pickBg('login-bg', 'images/login-bg.jpg');
+    $bgRegister = $pickBg('register1-bg', 'images/register1-bg.jpg');
 @endphp
 
 <style>
@@ -19,12 +31,13 @@
     .ga-rise  { animation: gaRise .7s cubic-bezier(.2,.8,.2,1) both; }
 
     .ga-wrap { position: relative; width: 100%; max-width: 900px; min-height: 700px; margin: 0 auto;
-               background: #fff; border-radius: 28px; overflow: hidden;
+               background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.3); border-radius: 28px; overflow: hidden;
                box-shadow: 0 25px 60px -12px rgba(19,57,97,.28); }
 
         /* Form (kiri = login, kanan = daftar) */
     .ga-form { position: absolute; top: 0; left: 0; width: 50%; height: 100%;
-               display: flex; justify-content: center; background: #fff;
+               display: flex; justify-content: center; background: rgba(255,255,255,.94); 
+              /* backdrop-filter: blur(12px); */
                padding: 24px 28px; overflow-y: auto;
                visibility: hidden; opacity: 0;
                transition: transform .65s ease-in-out, opacity .65s ease-in-out, visibility 0s linear .65s; }
@@ -61,12 +74,11 @@
                 transition: all .25s; }
     .ga-ghost:hover { background: #fff; color: #1e5288; transform: scale(1.05); }
 
-        /* Foto miring + shader di panel yang bergeser */
+            /* Foto miring + shader di panel yang bergeser */
     .ga-photo { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
     .ga-photo-right { clip-path: polygon(16% 0, 100% 0, 100% 100%, 0 100%); }
     .ga-photo-left  { clip-path: polygon(0 0, 84% 0, 100% 100%, 0 100%); }
-    .ga-photo-img { position: absolute; inset: 0; background-size: cover; background-position: center;
-                    animation: gaZoom 14s ease-in-out infinite alternate; }
+    .ga-photo-img { position: absolute; inset: 0; background-size: cover; background-position: center; }
     .ga-photo-shade { position: absolute; inset: 0; }
     .ga-photo-right .ga-photo-shade {
         background: linear-gradient(135deg, rgba(19,57,97,.90) 0%, rgba(30,82,136,.68) 55%, rgba(242,101,34,.50) 130%); }
@@ -76,6 +88,42 @@
     .ga-panel-right { padding-left: 56px; }
     .ga-panel-left  { padding-right: 56px; }
     @keyframes gaZoom { from { transform: scale(1); } to { transform: scale(1.12); } }
+
+        /* ===== Background halaman: foto miring + shader ===== */
+    @keyframes gaZoom { from { transform: scale(1); } to { transform: scale(1.12); } }
+
+    .ga-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+    .ga-bg-layer { position: absolute; inset: 0; transition: opacity .8s ease; }
+
+    /* Login: dasar biru. Daftar: dasar oranye (berlawanan) */
+    .ga-bg-login    { background: linear-gradient(135deg, #0b2545 0%, #133961 55%, #1e5288 100%); opacity: 1; }
+    .ga-bg-register { background: linear-gradient(225deg, #7c2d12 0%, #c2410c 55%, #f26522 100%); opacity: 0; }
+    .ga-section.is-register .ga-bg-login    { opacity: 0; }
+    .ga-section.is-register .ga-bg-register { opacity: 1; }
+
+    /* Foto dipotong miring, arahnya berlawanan */
+    .ga-bg-tilt { position: absolute; inset: 0; }
+    .ga-bg-login    .ga-bg-tilt { clip-path: polygon(34% 0, 100% 0, 100% 100%, 14% 100%); }
+    .ga-bg-register .ga-bg-tilt { clip-path: polygon(0 0, 66% 0, 86% 100%, 0 100%); }
+
+    .ga-bg-photo { position: absolute; inset: 0; background-size: cover; background-position: center;}
+    .ga-bg-shade { position: absolute; inset: 0; }
+
+    /* Shader: warna berlawanan */
+    .ga-bg-login .ga-bg-shade {
+        background: linear-gradient(135deg, rgba(19,57,97,.80) 0%, rgba(30,82,136,.55) 60%, rgba(242,101,34,.45) 130%); }
+    .ga-bg-register .ga-bg-shade {
+        background: linear-gradient(225deg, rgba(194,65,12,.80) 0%, rgba(242,101,34,.55) 60%, rgba(19,57,97,.50) 130%); }
+
+            /* Biar animasi geser lebih halus (dikerjakan GPU) */
+    .ga-form, .ga-overlay-box, .ga-overlay, .ga-panel { will-change: transform; backface-visibility: hidden; }
+    .ga-bg-layer { will-change: opacity; }
+
+    /* Hormati pengguna yang matikan animasi di perangkatnya */
+    @media (prefers-reduced-motion: reduce) {
+        .ga-form, .ga-overlay-box, .ga-overlay, .ga-panel, .ga-bg-layer { transition-duration: .01s !important; }
+        .ga-float, .ga-blob { animation: none !important; }
+    }
 
     /* Tab khusus HP */
     .ga-tabs { display: none; }
@@ -94,13 +142,8 @@
     }
 </style>
 
-<section class="relative overflow-hidden py-10 sm:py-14"
-         style="background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 50%, #fff7f2 100%);">
-
-    <div class="ga-blob absolute -top-24 -left-24 w-80 h-80 rounded-full bg-sky-200/50 blur-3xl"></div>
-    <div class="ga-blob absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-orange-200/50 blur-3xl" style="animation-delay:-4s"></div>
-
-    <div class="relative z-10 max-w-4xl mx-auto px-4 ga-rise"
+<section class="ga-section relative overflow-hidden py-10 sm:py-14"
+         :class="{ 'is-register': mode === 'register' }"
          x-data="{
             mode: '{{ $mode }}',
             portal: '{{ $portal }}',
@@ -111,6 +154,24 @@
                 history.replaceState(null, '', m === 'register' ? '{{ route('register') }}' : '{{ route('login') }}');
             }
          }">
+
+    {{-- BACKGROUND: foto miring + shader --}}
+    <div class="ga-bg">
+        <div class="ga-bg-layer ga-bg-login">
+            <div class="ga-bg-tilt">
+                <div class="ga-bg-photo" style="background-image:url('{{ $bgLogin }}');"></div>
+                <div class="ga-bg-shade"></div>
+            </div>
+        </div>
+        <div class="ga-bg-layer ga-bg-register">
+            <div class="ga-bg-tilt">
+                <div class="ga-bg-photo" style="background-image:url('{{ $bgRegister }}');"></div>
+                <div class="ga-bg-shade"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="relative z-10 max-w-4xl mx-auto px-4 ga-rise">
 
         <div class="ga-wrap" :class="{ 'is-register': mode === 'register' }">
 
@@ -136,19 +197,24 @@
                         <p class="text-sm text-green-600">{{ session('status') }}</p>
                     @endif
 
-                    {{-- Switch Customer / Admin --}}
-                    <div class="grid grid-cols-2 gap-1 p-1 rounded-xl bg-slate-100 text-sm font-bold">
-                        <button type="button" @click="portal = 'customer'"
-                                class="py-2 rounded-lg transition-all"
-                                :class="portal === 'customer' ? 'bg-white text-brand-orange shadow' : 'text-slate-500'">
-                            <i class="fa-solid fa-suitcase-rolling mr-1"></i> Customer
-                        </button>
-                        <button type="button" @click="portal = 'admin'"
-                                class="py-2 rounded-lg transition-all"
-                                :class="portal === 'admin' ? 'bg-slate-900 text-white shadow' : 'text-slate-500'">
-                            <i class="fa-solid fa-user-shield mr-1"></i> Admin
-                        </button>
-                    </div>
+                    {{-- Switch Customer / Guide / Admin --}}
+<div class="grid grid-cols-3 gap-1 p-1 rounded-xl bg-slate-100 text-xs sm:text-sm font-bold">
+    <button type="button" @click="portal = 'customer'"
+            class="py-2 rounded-lg transition-all"
+            :class="portal === 'customer' ? 'bg-white text-brand-orange shadow' : 'text-slate-500'">
+        <i class="fa-solid fa-suitcase-rolling mr-1"></i> Customer
+    </button>
+    <button type="button" @click="portal = 'guide'"
+            class="py-2 rounded-lg transition-all"
+            :class="portal === 'guide' ? 'bg-emerald-600 text-white shadow' : 'text-slate-500'">
+        <i class="fa-solid fa-map-location-dot mr-1"></i> Guide
+    </button>
+    <button type="button" @click="portal = 'admin'"
+            class="py-2 rounded-lg transition-all"
+            :class="portal === 'admin' ? 'bg-slate-900 text-white shadow' : 'text-slate-500'">
+        <i class="fa-solid fa-user-shield mr-1"></i> Admin
+    </button>
+</div>
 
                     <div>
                         <label for="login-email" class="text-sm font-semibold text-slate-700">Email</label>
@@ -187,14 +253,21 @@
                     </div>
 
                     <button type="submit"
-                            class="w-full py-3 rounded-xl text-white font-bold shadow-lg transition-all active:scale-95"
-                            :class="portal === 'admin' ? 'bg-slate-900 hover:bg-slate-800' : 'bg-brand-orange hover:bg-orange-600'"
-                            x-text="portal === 'admin' ? 'Masuk sebagai Admin' : 'Masuk'">
-                    </button>
+        class="w-full py-3 rounded-xl text-white font-bold shadow-lg transition-all active:scale-95"
+        :class="{
+            'bg-slate-900 hover:bg-slate-800': portal === 'admin',
+            'bg-emerald-600 hover:bg-emerald-700': portal === 'guide',
+            'bg-brand-orange hover:bg-orange-600': portal === 'customer'
+        }"
+        x-text="{ admin: 'Masuk sebagai Admin', guide: 'Masuk sebagai Guide', customer: 'Masuk' }[portal]">
+</button>
 
                     <p x-show="portal === 'admin'" x-cloak class="text-center text-xs text-slate-400">
-                        Akun admin dibuat oleh pengelola, tidak ada pendaftaran mandiri.
-                    </p>
+    Akun admin dibuat oleh pengelola, tidak ada pendaftaran mandiri.
+</p>
+<p x-show="portal === 'guide'" x-cloak class="text-center text-xs text-slate-400">
+    Akun guide dibuat oleh admin. Mau jadi guide? Hubungi support@gogoguide.com.
+</p>
                 </form>
             </div>
 
@@ -296,7 +369,7 @@
         </div>
 
         <p class="text-center mt-6 text-sm">
-            <a href="{{ route('home') }}" class="text-slate-500 hover:text-brand-blue">&larr; Kembali ke beranda</a>
+            <a href="{{ route('home') }}" class="text-white/80 hover:text-white">&larr; Kembali ke beranda</a>
         </p>
     </div>
 </section>

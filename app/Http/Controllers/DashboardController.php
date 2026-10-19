@@ -15,6 +15,10 @@ class DashboardController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
+        if ($user->role === 'guide') {
+            return redirect()->route('guide.dashboard');
+        }
+
         $base = Booking::where('user_id', $user->id);
 
         $stats = [
