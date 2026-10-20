@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Schedule;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Guide\DashboardController as GuideDashboardController;
+use App\Http\Controllers\ReviewController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/tours/{slug}', [TourController::class, 'show'])->name('tours.show');
@@ -47,5 +48,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
 });
 
+Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
 
 require __DIR__.'/auth.php';

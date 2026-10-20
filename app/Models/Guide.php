@@ -39,4 +39,6 @@ class Guide extends Model
             ->values()
             ->all();
     }
+    
+    public function reviews() { return $this->hasMany(Review::class); }
 }

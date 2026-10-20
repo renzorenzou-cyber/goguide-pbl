@@ -28,6 +28,7 @@
 </style>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
 <body class="bg-slate-50 font-sans text-slate-800 antialiased selection:bg-brand-orange selection:text-white">
 
   {{-- NAVBAR --}}
@@ -51,7 +52,35 @@
         .gg-nav { order: 2; width: auto; padding-bottom: 0; gap: 32px; }
         .gg-actions { order: 3; margin-left: 0; }
     }
+        html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+
+    /* ===== Menu bar tebal ===== */
+            .gg-menubar { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px;
+                  width: 100%; background: #133961; border-radius: 0; padding: 10px 16px;
+                  box-shadow: 0 10px 24px -10px rgba(19,57,97,.6);
+                  animation: ggMenuIn .8s cubic-bezier(.2,.8,.2,1) both; }
+    .gg-mi { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: 999px;
+             color: #fff; font-weight: 800; font-size: 15px; text-decoration: none; white-space: nowrap;
+             transition: background .25s, transform .25s; }
+    .gg-mi i { color: #f26522; transition: transform .3s, color .25s; }
+    .gg-mi:hover { background: #f26522; transform: translateY(-2px); }
+    .gg-mi:hover i { color: #fff; transform: scale(1.25) rotate(-8deg); }
+    .gg-mi.is-active { background: #f26522; }
+    .gg-mi.is-active i { color: #fff; }
+    @keyframes ggMenuIn { from { opacity: 0; transform: translateY(24px); }
+                          to   { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 639px) {
+        .gg-menubar { padding: 8px; gap: 2px; }
+        .gg-mi { padding: 9px 11px; font-size: 13px; }
+        .gg-mi i { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .gg-menubar { animation: none; }
+        .gg-mi, .gg-mi i { transition: none; }
+    }
 </style>
+
 
 <header class="gg-header">
     <div class="gg-bar">
@@ -66,12 +95,7 @@
     @endif
 </a>
 
-        {{-- Menu --}}
-        <nav class="gg-nav">
-            <a href="{{ route('home') }}#destinations">Destinations</a>
-            <a href="{{ route('home') }}#guides">Local Guides</a>
-            <a href="{{ route('home') }}#features">Why Us</a>
-        </nav>
+        
 
         {{-- Login / Booking Saya --}}
         <div class="gg-actions">
@@ -104,7 +128,9 @@
 
     </div>
 </header>
-
+@if(! $__env->hasSection('own_menubar'))
+    @include('partials.menubar')
+@endif
     {{-- ISI HALAMAN --}}
     @yield('content')
 

@@ -41,4 +41,6 @@ class Tour extends Model
 
         return $items->unique('url')->values();
     }
+    
+    public function reviews() { return $this->hasMany(Review::class); }
 }
