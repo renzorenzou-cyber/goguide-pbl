@@ -8,10 +8,13 @@ class TourController extends Controller
 {
     public function show(string $slug)
     {
-        $tour = Tour::with(['region', 'guide.user'])
+        $tour = Tour::with(['region', 'guide.user', 'guide.tours', 'images'])
             ->where('slug', $slug)
             ->firstOrFail();
 
-        return view('tours.show', compact('tour'));
+        // Tour lain dari guide yang sama (buat kartu guide)
+        $otherTours = $tour->guide->tours->where('id', '!=', $tour->id)->values();
+
+        return view('tours.show', compact('tour', 'otherTours'));
     }
 }

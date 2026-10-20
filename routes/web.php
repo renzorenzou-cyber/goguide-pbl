@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GuideController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TourController;
@@ -16,6 +17,7 @@ Route::get('/tours/{slug}', [TourController::class, 'show'])->name('tours.show')
 Route::middleware('auth')->group(function () {
     Route::post('/tours/{slug}/book', [BookingController::class, 'store'])->name('bookings.store');
     Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
+    Route::get('/guides/{guide}', [GuideController::class, 'show'])->name('guides.show');
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
