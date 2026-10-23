@@ -39,7 +39,7 @@
                         <button type="submit"
                                 class="px-6 py-3.5 bg-brand-blue hover:bg-brand-darkBlue text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm">
                             <i class="fa-solid fa-magnifying-glass"></i>
-                            <span>Find Guide</span>
+                            <span>Search</span>
                         </button>
                     </div>
                 </form>

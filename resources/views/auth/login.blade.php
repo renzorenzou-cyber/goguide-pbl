@@ -5,7 +5,6 @@
 @section('content')
 @php
     $mode    = old('form', $mode ?? 'login');
-    $portal  = in_array(old('portal'), ['admin', 'guide'], true) ? old('portal') : 'customer';
     $loginErr = old('form') === 'login';
     $regErr   = old('form') === 'register';
 
@@ -146,7 +145,6 @@
          :class="{ 'is-register': mode === 'register' }"
          x-data="{
             mode: '{{ $mode }}',
-            portal: '{{ $portal }}',
             showLogin: false,
             showReg: false,
             setMode(m) {
@@ -186,7 +184,7 @@
                 <form method="POST" action="{{ route('login') }}" class="ga-inner space-y-4">
                     @csrf
                     <input type="hidden" name="form" value="login">
-                    <input type="hidden" name="portal" :value="portal">
+                    
 
                     <div>
                         <h1 class="text-2xl font-extrabold text-slate-900">Masuk</h1>
@@ -197,24 +195,7 @@
                         <p class="text-sm text-green-600">{{ session('status') }}</p>
                     @endif
 
-                    {{-- Switch Customer / Guide / Admin --}}
-<div class="grid grid-cols-3 gap-1 p-1 rounded-xl bg-slate-100 text-xs sm:text-sm font-bold">
-    <button type="button" @click="portal = 'customer'"
-            class="py-2 rounded-lg transition-all"
-            :class="portal === 'customer' ? 'bg-white text-brand-orange shadow' : 'text-slate-500'">
-        <i class="fa-solid fa-suitcase-rolling mr-1"></i> Customer
-    </button>
-    <button type="button" @click="portal = 'guide'"
-            class="py-2 rounded-lg transition-all"
-            :class="portal === 'guide' ? 'bg-emerald-600 text-white shadow' : 'text-slate-500'">
-        <i class="fa-solid fa-map-location-dot mr-1"></i> Guide
-    </button>
-    <button type="button" @click="portal = 'admin'"
-            class="py-2 rounded-lg transition-all"
-            :class="portal === 'admin' ? 'bg-slate-900 text-white shadow' : 'text-slate-500'">
-        <i class="fa-solid fa-user-shield mr-1"></i> Admin
-    </button>
-</div>
+            
 
                     <div>
                         <label for="login-email" class="text-sm font-semibold text-slate-700">Email</label>
@@ -247,27 +228,17 @@
                             Ingat saya
                         </label>
                         @if (Route::has('password.request'))
-                            <a x-show="portal === 'customer'" href="{{ route('password.request') }}"
+                            <a href="{{ route('password.request') }}"
                                class="text-brand-blue hover:underline">Lupa password?</a>
                         @endif
                     </div>
 
                     <button type="submit"
-        class="w-full py-3 rounded-xl text-white font-bold shadow-lg transition-all active:scale-95"
-        :class="{
-            'bg-slate-900 hover:bg-slate-800': portal === 'admin',
-            'bg-emerald-600 hover:bg-emerald-700': portal === 'guide',
-            'bg-brand-orange hover:bg-orange-600': portal === 'customer'
-        }"
-        x-text="{ admin: 'Masuk sebagai Admin', guide: 'Masuk sebagai Guide', customer: 'Masuk' }[portal]">
+        class="w-full py-3 rounded-xl bg-brand-orange hover:bg-orange-600 text-white font-bold shadow-lg transition-all active:scale-95">
+    Masuk
 </button>
 
-                    <p x-show="portal === 'admin'" x-cloak class="text-center text-xs text-slate-400">
-    Akun admin dibuat oleh pengelola, tidak ada pendaftaran mandiri.
-</p>
-<p x-show="portal === 'guide'" x-cloak class="text-center text-xs text-slate-400">
-    Akun guide dibuat oleh admin. Mau jadi guide? Hubungi support@gogoguide.com.
-</p>
+                    
                 </form>
             </div>
 

@@ -11,12 +11,6 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
-    private const LABELS = [
-        'customer' => 'Customer',
-        'guide'    => 'Guide',
-        'admin'    => 'Admin',
-    ];
-
     public function create(): View
     {
         return view('auth.login', ['mode' => 'login']);
@@ -25,29 +19,10 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
-        $chosen = in_array($request->input('portal'), ['admin', 'guide'], true)
-            ? $request->input('portal')
-            : 'customer';
-
-        $role   = $request->user()->role;
-        $actual = in_array($role, ['admin', 'guide'], true) ? $role : 'customer';
-
-        // Pilihan di form harus cocok dengan role akun
-        if ($chosen !== $actual) {
-            Auth::guard('web')->logout();
-
-            return back()
-                ->withInput($request->only('email', 'portal', 'form'))
-                ->withErrors([
-                    'email' => 'Akun ini terdaftar sebagai ' . self::LABELS[$actual]
-                        . '. Pilih "' . self::LABELS[$actual] . '" untuk masuk.',
-                ]);
-        }
-
         $request->session()->regenerate();
 
-        return match ($actual) {
+        // Arah tujuan ditentukan dari role akun, bukan dari input form
+        return match ($request->user()->role) {
             'admin' => redirect()->intended(route('admin.dashboard')),
             'guide' => redirect()->intended(route('guide.dashboard')),
             default => redirect()->intended(route('dashboard')),
