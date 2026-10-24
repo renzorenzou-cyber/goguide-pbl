@@ -6,39 +6,45 @@ use Illuminate\Database\Eloquent\Model;
 
 class Guide extends Model
 {
+    protected $table = 'guide';
+    protected $primaryKey = 'id_guide';
     protected $fillable = [
-        'user_id', 'specialty', 'bio', 'languages',
-        'experience_years', 'base_location',
-        'photo', 'rating', 'review_count',
+        'id_user', 'nama_guide', 'email', 'no_wa', 'no_telepon', 'alamat',
+        'bio_singkat', 'bio_lengkap_file', 'rating', 'status_pendaftaran',
+        'alasan_penolakan', 'disetujui_oleh', 'tanggal_persetujuan',
+    ];
+    protected $casts = [
+        'rating' => 'decimal:2',
+        'tanggal_persetujuan' => 'datetime',
     ];
 
-    public function user()  { return $this->belongsTo(User::class); }
-    public function tours() { return $this->hasMany(Tour::class); }
-
-    // Foto guide; kalau kosong pakai foto akun user. Null kalau dua-duanya nggak ada.
-    public function getPhotoUrlAttribute(): ?string
+    public function scopeDisetujui($query)
     {
-        $path = $this->photo ?: $this->user?->photo;
-
-        return $path && file_exists(public_path($path))
-            ? asset($path)
-            : null;
+        return $query->where('status_pendaftaran', 'disetujui');
     }
 
-    public function getInitialsAttribute(): string
+    public function user()
     {
-        return $this->user?->initials ?? '';
+        return $this->belongsTo(User::class, 'id_user');
     }
 
-    // "Indonesia, English" -> ['Indonesia', 'English']
-    public function getLanguageListAttribute(): array
+    public function penyetuju()
     {
-        return collect(explode(',', (string) $this->languages))
-            ->map(fn ($l) => trim($l))
-            ->filter()
-            ->values()
-            ->all();
+        return $this->belongsTo(User::class, 'disetujui_oleh');
     }
-    
-    public function reviews() { return $this->hasMany(Review::class); }
+
+    public function jadwal()
+    {
+        return $this->hasMany(JadwalGuide::class, 'id_guide', 'id_guide');
+    }
+
+    public function paket()
+    {
+        return $this->belongsToMany(PaketWisata::class, 'tour_guide', 'id_guide', 'id_paket', 'id_guide', 'id_paket');
+    }
+
+    public function booking()
+    {
+        return $this->hasMany(Booking::class, 'id_guide', 'id_guide');
+    }
 }

@@ -18,16 +18,16 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-   protected $fillable = [
-    'name',
-    'email',
-    'password',
-    'role',
-    'phone',
-    'photo',
-];
-
-
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role',
+        'phone',
+        'photo',
+        'username',
+        'wajib_ganti_password',
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -49,27 +49,38 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'wajib_ganti_password' => 'boolean',
         ];
     }
 
     public function getPhotoUrlAttribute(): ?string
-{
-    return $this->photo && file_exists(public_path($this->photo))
-        ? asset($this->photo)
-        : null;
-}
+    {
+        return $this->photo && file_exists(public_path($this->photo))
+            ? asset($this->photo)
+            : null;
+    }
 
-public function getInitialsAttribute(): string
-{
-    return collect(explode(' ', trim($this->name)))
-        ->filter()
-        ->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))
-        ->take(2)
-        ->implode('');
-}
+    public function getInitialsAttribute(): string
+    {
+        return collect(explode(' ', trim($this->name)))
+            ->filter()
+            ->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))
+            ->take(2)
+            ->implode('');
+    }
 
-public function guide()
-{
-    return $this->hasOne(Guide::class);
-}
+    public function guide()
+    {
+        return $this->hasOne(Guide::class, 'id_user');
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'id_customer');
+    }
+
+    public function notifikasi()
+    {
+        return $this->hasMany(Notifikasi::class, 'id_user');
+    }
 }

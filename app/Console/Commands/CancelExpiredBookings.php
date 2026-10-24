@@ -7,26 +7,21 @@ use Illuminate\Console\Command;
 
 class CancelExpiredBookings extends Command
 {
-    protected $signature = 'bookings:cancel-expired {--minutes=30}';
+    protected $signature = 'bookings:cancel-expired';
 
-    protected $description = 'Batalkan booking pending yang tidak dibayar dalam batas waktu';
+    protected $description = 'Batalkan booking belum_bayar yang melewati batas bayar';
 
     public function handle(): int
     {
-        $minutes = (int) $this->option('minutes');
+        $jumlah = Booking::where('status', 'belum_bayar')
+            ->whereNotNull('batas_bayar')
+            ->where('batas_bayar', '<', now())
+            ->update([
+                'status' => 'dibatalkan',
+                'alasan_batal' => 'Batas waktu pembayaran terlewati',
+            ]);
 
-        $expired = Booking::where('status', 'pending')
-            ->where('created_at', '<', now()->subMinutes($minutes))
-            ->get();
-
-        foreach ($expired as $booking) {
-            $booking->update(['status' => 'cancelled']);
-            $booking->payments()
-                ->where('status', 'pending')
-                ->update(['status' => 'expired']);
-        }
-
-        $this->info($expired->count() . ' booking dibatalkan.');
+        $this->info($jumlah . ' booking dibatalkan.');
 
         return self::SUCCESS;
     }

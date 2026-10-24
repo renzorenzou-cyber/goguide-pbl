@@ -6,16 +6,49 @@ use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
+    public const STATUS = ['belum_bayar', 'sudah_bayar', 'dikonfirmasi', 'dibatalkan'];
+
+    protected $table = 'booking';
+    protected $primaryKey = 'id_booking';
     protected $fillable = [
-        'booking_code', 'user_id', 'tour_id', 'tour_date',
-        'participants', 'total_price', 'status', 'notes',
+        'kode_booking', 'id_customer', 'id_paket', 'id_guide',
+        'tanggal_transaksi', 'tanggal_booking', 'jumlah_peserta', 'catatan',
+        'harga_satuan', 'total_bayar', 'fee_guide',
+        'kode_va', 'id_transaksi_gateway', 'batas_bayar', 'tanggal_bayar',
+        'status', 'alasan_batal', 'dikonfirmasi_oleh', 'tanggal_konfirmasi',
+        'status_bayar_guide', 'tanggal_bayar_guide',
     ];
-
     protected $casts = [
-        'tour_date' => 'date',
+        'tanggal_transaksi' => 'datetime',
+        'tanggal_booking' => 'date',
+        'batas_bayar' => 'datetime',
+        'tanggal_bayar' => 'datetime',
+        'tanggal_konfirmasi' => 'datetime',
+        'tanggal_bayar_guide' => 'datetime',
     ];
 
-    public function user() { return $this->belongsTo(User::class); }
-    public function tour() { return $this->belongsTo(Tour::class); }
-    public function payments() { return $this->hasMany(Payment::class); }
+    public function customer()
+    {
+        return $this->belongsTo(User::class, 'id_customer');
+    }
+
+    public function paket()
+    {
+        return $this->belongsTo(PaketWisata::class, 'id_paket', 'id_paket');
+    }
+
+    public function guide()
+    {
+        return $this->belongsTo(Guide::class, 'id_guide', 'id_guide');
+    }
+
+    public function pengonfirmasi()
+    {
+        return $this->belongsTo(User::class, 'dikonfirmasi_oleh');
+    }
+
+    public function notifikasi()
+    {
+        return $this->hasMany(Notifikasi::class, 'id_booking', 'id_booking');
+    }
 }
