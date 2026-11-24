@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'Go Go Guide - Your Personal Tour Experts')</title>
+    <title>@yield('title', 'GoGuide - Your Personal Tour Experts')</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -87,11 +87,11 @@
 
         {{-- Logo --}}
         <a href="{{ route('home') }}" class="gg-logo">
-    @if(file_exists(public_path('images/logo.png')))
-        <img src="{{ asset('images/logo.png') }}" alt="Go Go Guide"
-             style="height:48px; width:auto; max-width:200px; object-fit:contain;">
+    @if(file_exists(public_path('images/logonew.png')))
+        <img src="{{ asset('images/logonew.png') }}" alt="GoGuide"
+             style="height:100px; width:auto; max-width:200px; object-fit:contain;">
     @else
-        <span style="font-weight:800; font-size:24px; color:#1e5288;">GO <span style="color:#f26522;">GO</span> GUIDE</span>
+        <span style="font-weight:800; font-size:24px; color:#1e5288;">Go<span style="color:#f26522;">Guide</span></span>
     @endif
 </a>
 
@@ -101,9 +101,16 @@
         <div class="gg-actions">
             @auth
     <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('dashboard') }}" class="gg-link">Dashboard</a>
-    @if(auth()->user()->role === 'customer')
-        <a href="{{ route('bookings.index') }}" class="gg-link">Booking Saya</a>
+    @if(auth()->user()->role === 'wisatawan' && Route::has('bookings.index'))
+    <a href="{{ route('bookings.index') }}" class="gg-link">Booking Saya</a>
+@endif
+@php $notifBelumDibaca = \App\Models\Notifikasi::where('id_user', auth()->id())->where('dibaca', false)->count(); @endphp
+<a href="{{ route('notifikasi.index') }}" class="gg-link" style="position:relative;" aria-label="Notifikasi{{ $notifBelumDibaca ? ', ' . $notifBelumDibaca . ' belum dibaca' : '' }}">
+    <i class="fa-solid fa-bell"></i>
+    @if ($notifBelumDibaca > 0)
+        <span style="position:absolute; top:-8px; right:-10px; min-width:18px; height:18px; padding:0 5px; border-radius:999px; background:#f26522; color:#fff; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center;">{{ $notifBelumDibaca > 99 ? '99+' : $notifBelumDibaca }}</span>
     @endif
+</a>
     <a href="{{ route('profile.edit') }}" class="gg-link" style="display:flex; align-items:center; gap:8px;">
     @if(auth()->user()->photo_url)
         <img src="{{ auth()->user()->photo_url }}" alt=""
@@ -140,8 +147,8 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-slate-700">
                 <div>
                     <div class="flex items-center gap-2 font-extrabold text-xl text-white mb-3">
-                        <span>GO</span>
-                        <span class="text-brand-orange">GO GUIDE</span>
+                        <span>Go</span>
+                        <span class="text-brand-orange">Guide</span>
                     </div>
                     <p class="text-xs text-slate-400 leading-relaxed">
                         Menghubungkan traveler dengan guide lokal bersertifikat untuk perjalanan yang bermakna.
@@ -152,7 +159,7 @@
                     <ul class="space-y-2 text-xs text-slate-300">
                         <li><a href="{{ route('home') }}#destinations" class="hover:text-brand-orange">Popular Destinations</a></li>
                         <li><a href="{{ route('home') }}#guides" class="hover:text-brand-orange">Meet Guides</a></li>
-                        <li><a href="{{ route('home') }}#features" class="hover:text-brand-orange">Why Go Go Guide</a></li>
+                        <li><a href="{{ route('home') }}#features" class="hover:text-brand-orange">Why GoGuide</a></li>
                     </ul>
                 </div>
                 <div>
@@ -166,11 +173,11 @@
                 <div>
                     <h5 class="text-sm font-bold text-white mb-3">Support</h5>
                     <p class="text-xs text-slate-400 mb-2">Butuh bantuan dengan booking?</p>
-                    <a href="mailto:support@gogoguide.com" class="text-xs text-brand-orange font-bold hover:underline">support@gogoguide.com</a>
+                    <a href="mailto:support@goguide.com" class="text-xs text-brand-orange font-bold hover:underline">support@goguide.com</a>
                 </div>
             </div>
             <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400">
-                <p>&copy; {{ date('Y') }} Go Go Guide. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} GoGuide. All rights reserved.</p>
                 <div class="flex gap-4 mt-3 sm:mt-0">
                     <a href="#" class="hover:text-white"><i class="fa-brands fa-instagram"></i></a>
                     <a href="#" class="hover:text-white"><i class="fa-brands fa-facebook"></i></a>

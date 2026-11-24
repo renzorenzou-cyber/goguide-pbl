@@ -107,7 +107,7 @@ return new class extends Migration
         Schema::create('booking', function (Blueprint $table) {
             $table->id('id_booking');
             $table->string('kode_booking', 20)->unique();
-            $table->foreignId('id_customer')->constrained('users')->restrictOnDelete();
+            $table->foreignId('id_wisatawan')->constrained('users')->restrictOnDelete();
             $table->foreignId('id_paket')->constrained('paket_wisata', 'id_paket')->restrictOnDelete();
             $table->foreignId('id_guide')->constrained('guide', 'id_guide')->restrictOnDelete();
             $table->dateTime('tanggal_transaksi');

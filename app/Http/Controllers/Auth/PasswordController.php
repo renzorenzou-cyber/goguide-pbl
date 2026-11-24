@@ -20,10 +20,19 @@ class PasswordController extends Controller
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
-        $request->user()->update([
-            'password' => Hash::make($validated['password']),
-        ]);
+        $user = $request->user();
+$perluGanti = (bool) $user->wajib_ganti_password;
 
-        return back()->with('status', 'password-updated');
+$user->update([
+    'password' => Hash::make($validated['password']),
+    'wajib_ganti_password' => false,
+]);
+
+if ($perluGanti && $user->role === 'guide') {
+    return redirect()->route('guide.dashboard')
+        ->with('success', 'Password berhasil diganti. Sekarang pilih paket yang kamu tangani dan isi jadwal layananmu.');
+}
+
+return back()->with('status', 'password-updated');
     }
 }

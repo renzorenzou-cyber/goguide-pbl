@@ -14,32 +14,29 @@ class DashboardController extends Controller
         if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard');
         }
-
         if ($user->role === 'guide') {
             return redirect()->route('guide.dashboard');
         }
 
-        $base = Booking::where('user_id', $user->id);
+        $wisatawan = $user->wisatawan;
 
-        $stats = [
-            'total'   => (clone $base)->count(),
-            'pending' => (clone $base)->where('status', 'pending')->count(),
-            'paid'    => (clone $base)->where('status', 'paid')->count(),
+        $semua = $wisatawan
+            ? Booking::with(['paket', 'guide'])
+                ->where('id_wisatawan', $wisatawan->id_wisatawan)
+                ->orderByDesc('tanggal_transaksi')
+                ->get()
+            : collect();
+
+        // Booking aktif: belum dibatalkan dan tanggal tour belum lewat
+        $aktif = $semua->filter(fn ($b) => $b->status !== 'dibatalkan' && $b->tanggal_booking->gte(today()))->values();
+        $riwayat = $semua->reject(fn ($b) => $aktif->contains('id_booking', $b->id_booking))->values();
+
+        $ringkasan = [
+            'total'        => $semua->count(),
+            'belum_bayar'  => $semua->where('status', 'belum_bayar')->count(),
+            'dikonfirmasi' => $semua->where('status', 'dikonfirmasi')->count(),
         ];
 
-        $upcoming = Booking::with('tour.region')
-            ->where('user_id', $user->id)
-            ->where('status', 'paid')
-            ->whereDate('tour_date', '>=', today())
-            ->orderBy('tour_date')
-            ->first();
-
-        $recent = Booking::with('tour.region')
-            ->where('user_id', $user->id)
-            ->latest()
-            ->take(5)
-            ->get();
-
-        return view('dashboard', compact('stats', 'upcoming', 'recent'));
+        return view('dashboard', compact('user', 'aktif', 'riwayat', 'ringkasan'));
     }
 }

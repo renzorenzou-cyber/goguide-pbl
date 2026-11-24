@@ -1,6 +1,6 @@
 @extends('layouts.site')
 
-@section('title', $guide->user->name . ' - Guide di Go Go Guide')
+@section('title', $guide->user->name . ' - Guide di GoGuide')
 
 @section('content')
 @php

@@ -22,3 +22,7 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+/project_dump.txt
+/struktur.txt
+/body.json

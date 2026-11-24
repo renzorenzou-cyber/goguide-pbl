@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
-    public const STATUS = ['belum_bayar', 'sudah_bayar', 'dikonfirmasi', 'dibatalkan'];
+    public const STATUS = ['belum_bayar', 'sudah_bayar', 'dikonfirmasi', 'selesai', 'dibatalkan'];
 
     protected $table = 'booking';
     protected $primaryKey = 'id_booking';
     protected $fillable = [
-        'kode_booking', 'id_customer', 'id_paket', 'id_guide',
-        'tanggal_transaksi', 'tanggal_booking', 'jumlah_peserta', 'catatan',
+        'kode_booking', 'id_wisatawan', 'id_paket', 'id_guide',
+        'tanggal_transaksi', 'tanggal_booking', 'jam_mulai', 'jumlah_peserta', 'catatan',
         'harga_satuan', 'total_bayar', 'fee_guide',
-        'kode_va', 'id_transaksi_gateway', 'batas_bayar', 'tanggal_bayar',
+        'kode_va', 'metode_pembayaran', 'id_transaksi_gateway', 'batas_bayar', 'tanggal_bayar',
         'status', 'alasan_batal', 'dikonfirmasi_oleh', 'tanggal_konfirmasi',
         'status_bayar_guide', 'tanggal_bayar_guide',
     ];
@@ -27,9 +27,9 @@ class Booking extends Model
         'tanggal_bayar_guide' => 'datetime',
     ];
 
-    public function customer()
+    public function wisatawan()
     {
-        return $this->belongsTo(User::class, 'id_customer');
+        return $this->belongsTo(Wisatawan::class, 'id_wisatawan', 'id_wisatawan');
     }
 
     public function paket()
@@ -45,6 +45,11 @@ class Booking extends Model
     public function pengonfirmasi()
     {
         return $this->belongsTo(User::class, 'dikonfirmasi_oleh');
+    }
+
+        public function bahanBakar()
+    {
+        return $this->hasMany(BahanBakar::class, 'id_booking', 'id_booking');
     }
 
     public function notifikasi()

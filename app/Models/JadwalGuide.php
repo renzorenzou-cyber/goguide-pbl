@@ -8,7 +8,7 @@ class JadwalGuide extends Model
 {
     protected $table = 'jadwal_guide';
     protected $primaryKey = 'id_jadwal';
-    protected $fillable = ['id_guide', 'tanggal_aktif'];
+    protected $fillable = ['id_guide', 'tanggal_aktif', 'jam_mulai', 'jam_selesai', 'status', 'keterangan'];
     protected $casts = ['tanggal_aktif' => 'date'];
 
     public function guide()

@@ -7,7 +7,6 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -74,9 +73,14 @@ class User extends Authenticatable
         return $this->hasOne(Guide::class, 'id_user');
     }
 
+    public function wisatawan()
+    {
+        return $this->hasOne(Wisatawan::class, 'id_user');
+    }
+
     public function bookings()
     {
-        return $this->hasMany(Booking::class, 'id_customer');
+        return $this->hasMany(Booking::class, 'id_wisatawan');
     }
 
     public function notifikasi()

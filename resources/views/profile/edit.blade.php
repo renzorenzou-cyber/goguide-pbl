@@ -1,6 +1,6 @@
 @extends('layouts.site')
 
-@section('title', 'Profil Saya - Go Go Guide')
+@section('title', 'Profil Saya - GoGuide')
 
 @section('content')
 @php
@@ -19,7 +19,7 @@
 
         <a href="{{ $backUrl }}" class="text-sm text-slate-500 hover:text-brand-blue">&larr; Kembali ke Dashboard</a>
 
-        {{-- Header (beda warna untuk admin dan customer) --}}
+        {{-- Header (beda warna untuk admin dan wisatawan) --}}
         <div class="mt-4 rounded-3xl p-6 sm:p-8 text-white flex items-center gap-5" style="background: {{ $headBg }};">
             @if($user->photo_url)
                 <img src="{{ $user->photo_url }}" alt="{{ $user->name }}"
@@ -34,7 +34,7 @@
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold
              {{ $isAdmin ? 'bg-white/10 border border-white/20' : ($user->role === 'guide' ? 'bg-emerald-600' : 'bg-orange-500') }}">
     <i class="fa-solid {{ $isAdmin ? 'fa-user-shield' : ($user->role === 'guide' ? 'fa-map-location-dot' : 'fa-suitcase-rolling') }}"></i>
-    {{ $isAdmin ? 'Admin' : ($user->role === 'guide' ? 'Tour Guide' : 'Customer') }}
+    {{ $isAdmin ? 'Admin' : ($user->role === 'guide' ? 'Tour Guide' : 'Wisatawan') }}
 </span>
                 <h1 class="text-2xl font-extrabold mt-2 truncate">{{ $user->name }}</h1>
                 <p class="text-sm text-white/70 truncate">{{ $user->email }}</p>
@@ -42,11 +42,12 @@
             </div>
         </div>
 
-        @if(session('status') === 'profile-updated')
-            <div class="mt-6 rounded-2xl bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3">
-                <i class="fa-solid fa-circle-check mr-1"></i> Profil berhasil diperbarui.
-            </div>
-        @endif
+        @if(session('wajib_ganti'))
+    <div role="alert" class="mt-6 rounded-2xl bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm px-4 py-3">
+        <i class="fa-solid fa-key mr-1"></i> {{ session('wajib_ganti') }}
+        Isi bagian <b>Update Password</b> di bawah (password lama = password sementara dari email).
+    </div>
+@endif
 
         {{-- Form profil --}}
         <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data"

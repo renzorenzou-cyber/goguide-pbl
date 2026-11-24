@@ -8,7 +8,7 @@ class DetailPaketWisata extends Model
 {
     protected $table = 'detail_paket_wisata';
     protected $primaryKey = 'id_detail_paket';
-    protected $fillable = ['id_paket', 'id_objek', 'urutan'];
+    protected $fillable = ['id_paket', 'id_objek', 'urutan', 'durasi_kunjungan', 'keterangan'];
 
     public function paket()
     {

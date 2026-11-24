@@ -8,7 +8,7 @@ class TourGuide extends Model
 {
     protected $table = 'tour_guide';
     protected $primaryKey = 'id_tourguide';
-    protected $fillable = ['id_guide', 'id_paket'];
+    protected $fillable = ['id_guide', 'id_paket', 'status', 'catatan'];
 
     public function guide()
     {

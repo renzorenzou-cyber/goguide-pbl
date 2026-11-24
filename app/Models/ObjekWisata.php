@@ -8,7 +8,7 @@ class ObjekWisata extends Model
 {
     protected $table = 'objek_wisata';
     protected $primaryKey = 'id_objek';
-    protected $fillable = ['nama_objek', 'id_kategori', 'id_area', 'deskripsi', 'foto'];
+    protected $fillable = ['nama_objek', 'id_kategori', 'id_area', 'deskripsi', 'alamat', 'foto', 'harga_tiket', 'status'];
 
     public function kategori()
     {

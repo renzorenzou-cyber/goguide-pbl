@@ -1,6 +1,6 @@
 @extends('layouts.site')
 
-@section('title', 'Masuk / Daftar - Go Go Guide')
+@section('title', 'Masuk / Daftar - GoGuide')
 
 @section('content')
 @php
@@ -199,7 +199,7 @@
 
                     <div>
                         <label for="login-email" class="text-sm font-semibold text-slate-700">Email</label>
-                        <input id="login-email" type="email" name="email" required autocomplete="username"
+                        <input id="login-email" type="text" name="email" required autocomplete="username"
                                value="{{ $loginErr ? old('email') : '' }}"
                                class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-brand-blue focus:ring-brand-blue">
                         @if($loginErr)
