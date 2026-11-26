@@ -39,7 +39,14 @@ class HomeController extends Controller
             ->take(self::PAKET_DI_HOME)
             ->get();
 
-        $guides = Guide::disetujui()->withCount('paket')->orderByDesc('rating')->take(4)->get();
+        // Maksimal 4 guide di beranda. Aturan sama dengan halaman /guides.
+        $guides = Guide::disetujui()
+            ->has('paket')
+            ->with('user')
+            ->withCount('paket')
+            ->orderByDesc('rating')
+            ->take(4)
+            ->get();
 
         return view('home', compact('areas', 'pakets', 'totalPaket', 'guides'));
     }

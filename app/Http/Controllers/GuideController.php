@@ -14,7 +14,7 @@ class GuideController extends Controller
     {
         $guides = Guide::disetujui()
             ->has('paket')
-            ->with(['bahasa', 'paket'])
+            ->with(['user','bahasa', 'paket'])
             ->when($request->q, fn ($q, $kata) =>
                 $q->where('guide.nama_guide', 'like', "%{$kata}%"))
             ->when($request->bahasa, fn ($q, $idBahasa) =>
@@ -40,7 +40,7 @@ class GuideController extends Controller
             404
         );
 
-        $guide->load(['bahasa', 'paket']);
+        $guide->load(['user', 'bahasa', 'paket']);
 
         // 30 tanggal terdekat yang tersedia (jadwal Tersedia dan belum dipesan)
         $tanggalTersedia = $guide->tanggalTersedia(30);

@@ -119,6 +119,18 @@
                 </p>
             </div>
 
+            {{-- Tentang saya (khusus guide) --}}
+            @if($user->role === 'guide' && $user->guide)
+                <div>
+                    <label for="tentang_saya" class="text-sm font-semibold text-slate-700">Tentang Saya</label>
+                    <textarea id="tentang_saya" name="tentang_saya" rows="5" maxlength="1000"
+                              placeholder="Ceritakan dirimu, gaya memandu, dan hal yang membuat tour bersamamu berkesan."
+                              class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-brand-blue focus:ring-brand-blue">{{ old('tentang_saya', $user->guide->tentang_saya) }}</textarea>
+                    @error('tentang_saya') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    <p class="text-[11px] text-slate-400 mt-1">Tampil di profil publikmu. Maksimal 1000 karakter.</p>
+                </div>
+            @endif
+
             <button type="submit"
                     class="px-6 py-3 rounded-xl text-white font-bold shadow-lg transition-all active:scale-95"
                     style="background: {{ $accent }};">

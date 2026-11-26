@@ -10,9 +10,7 @@ class Guide extends Model
     protected $primaryKey = 'id_guide';
     protected $fillable = [
         'id_user', 'nama_guide', 'email', 'no_wa', 'no_telepon', 'alamat',
-        'bio_singkat', 'bio_lengkap_file', 'sertifikat_file', 'pengalaman', 'foto', 'rating',
-        'status_verifikasi', 'status', 'alasan_penolakan', 'disetujui_oleh', 'tanggal_persetujuan',
-    ];
+'bio_singkat', 'bio_lengkap_file', 'sertifikat_file', 'pengalaman', 'tentang_saya', 'foto', 'rating',    ];
     protected $casts = [
         'rating' => 'decimal:2',
         'tanggal_persetujuan' => 'datetime',
@@ -26,6 +24,10 @@ class Guide extends Model
 
     public function getFotoUrlAttribute(): ?string
     {
+        if ($this->user && $this->user->photo_url) {
+            return $this->user->photo_url;
+        }
+
         return $this->foto && file_exists(public_path($this->foto)) ? asset($this->foto) : null;
     }
 

@@ -31,6 +31,7 @@ class ProfileController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'phone' => ['nullable', 'string', 'regex:/^(\+62|62|0)8[0-9]{8,11}$/'],
             'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'tentang_saya' => ['nullable', 'string', 'max:1000'],
         ], [
             'email.unique'   => 'Email ini sudah dipakai akun lain.',
             'phone.regex'    => 'Nomor HP tidak valid. Contoh: 081234567890 atau +6281234567890.',
@@ -38,6 +39,7 @@ class ProfileController extends Controller
             'photo.mimes'    => 'Format foto harus JPG, PNG, atau WebP.',
             'photo.max'      => 'Ukuran foto maksimal 2 MB.',
             'photo.uploaded' => 'Foto gagal diunggah, coba file yang lebih kecil.',
+        'tentang_saya.max' => 'Deskripsi maksimal 1000 karakter.',
         ]);
 
         // Hanya kolom ini yang boleh diubah dari form (role tidak pernah ikut)
@@ -63,7 +65,9 @@ class ProfileController extends Controller
         }
 
         $user->update($update);
-
+ if ($user->role === 'guide' && $user->guide) {
+            $user->guide->update(['tentang_saya' => $data['tentang_saya'] ?? null]);
+        }
         return back()->with('status', 'profile-updated');
     }
 

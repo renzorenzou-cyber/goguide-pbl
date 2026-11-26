@@ -35,6 +35,16 @@
         </div>
     </div>
 
+    {{-- TENTANG SAYA --}}
+    @if($guide->tentang_saya)
+        <div class="bg-white rounded-2xl border border-slate-100 p-6 mt-6">
+            <h2 class="font-bold text-slate-900 text-lg">Tentang Saya</h2>
+            <div class="text-sm text-slate-600 mt-3 leading-relaxed">
+                {!! nl2br(e($guide->tentang_saya)) !!}
+            </div>
+        </div>
+    @endif
+
     <div class="grid md:grid-cols-2 gap-6 mt-6">
         {{-- PENGALAMAN --}}
         <div class="bg-white rounded-2xl border border-slate-100 p-6">

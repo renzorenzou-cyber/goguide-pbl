@@ -88,12 +88,15 @@
             <span class="text-brand-orange font-bold text-sm uppercase tracking-wider">Guide Kami</span>
             <h2 class="text-3xl font-extrabold text-slate-900 mt-1">Guide Lokal Berpengalaman</h2>
         </div>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                       @forelse($guides as $g)
+
+        {{-- flex + justify-center: kartu rata tengah, makin banyak guide makin menyebar ke kiri dan kanan --}}
+        <div class="flex flex-wrap justify-center gap-6">
+            @forelse($guides as $g)
                 @php
                     $inisial = collect(explode(' ', $g->nama_guide))->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->take(2)->implode('');
                 @endphp
-                <a href="{{ route('guides.show', $g) }}" class="block bg-white p-6 rounded-2xl shadow-sm border border-slate-100 text-center hover:shadow-xl transition-all">
+                <a href="{{ route('guides.show', $g) }}"
+                   class="block w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] bg-white p-6 rounded-2xl shadow-sm border border-slate-100 text-center hover:shadow-xl transition-all">
                     @if($g->foto_url)
                         <img src="{{ $g->foto_url }}" alt="{{ $g->nama_guide }}" class="w-20 h-20 rounded-full mx-auto object-cover guide-avatar-ring">
                     @else
@@ -107,15 +110,16 @@
                     <p class="text-xs text-brand-blue font-semibold mt-3">{{ $g->paket_count }} paket ditangani</p>
                 </a>
             @empty
-                <p class="sm:col-span-2 lg:col-span-4 text-center text-slate-500">Belum ada guide.</p>
+                <p class="text-center text-slate-500">Belum ada guide.</p>
             @endforelse
+        </div>
 
-            <div class="sm:col-span-2 lg:col-span-4 text-center mt-4">
-                <a href="{{ route('guides.index') }}"
-                   class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-blue hover:bg-brand-darkBlue text-white font-bold text-sm shadow">
-                    Lihat semua guide <i class="fa-solid fa-arrow-right"></i>
-                </a>
-            </div>
+        {{-- Tombol selalu tampil, berapa pun jumlah guide --}}
+        <div class="mt-10 text-center">
+            <a href="{{ route('guides.index') }}"
+               class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-blue hover:bg-brand-darkBlue text-white font-bold text-sm shadow">
+                Lihat semua guide <i class="fa-solid fa-arrow-right"></i>
+            </a>
         </div>
     </div>
 </section>
