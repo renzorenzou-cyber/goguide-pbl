@@ -158,8 +158,7 @@
                     <h5 class="text-sm font-bold text-white mb-3">Quick Links</h5>
                     <ul class="space-y-2 text-xs text-slate-300">
                         <li><a href="{{ route('home') }}#destinations" class="hover:text-brand-orange">Popular Destinations</a></li>
-                        <li><a href="{{ route('home') }}#guides" class="hover:text-brand-orange">Meet Guides</a></li>
-                        <li><a href="{{ route('home') }}#features" class="hover:text-brand-orange">Why GoGuide</a></li>
+<li><a href="{{ route('guides.index') }}" class="hover:text-brand-orange">Meet Guides</a></li>                        <li><a href="{{ route('home') }}#features" class="hover:text-brand-orange">Why GoGuide</a></li>
                     </ul>
                 </div>
                 <div>

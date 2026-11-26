@@ -89,22 +89,33 @@
             <h2 class="text-3xl font-extrabold text-slate-900 mt-1">Guide Lokal Berpengalaman</h2>
         </div>
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            @forelse($guides as $g)
+                       @forelse($guides as $g)
                 @php
                     $inisial = collect(explode(' ', $g->nama_guide))->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->take(2)->implode('');
                 @endphp
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 text-center">
-                    <div class="w-20 h-20 rounded-full mx-auto bg-brand-blue text-white flex items-center justify-center text-2xl font-extrabold guide-avatar-ring">{{ $inisial }}</div>
+                <a href="{{ route('guides.show', $g) }}" class="block bg-white p-6 rounded-2xl shadow-sm border border-slate-100 text-center hover:shadow-xl transition-all">
+                    @if($g->foto_url)
+                        <img src="{{ $g->foto_url }}" alt="{{ $g->nama_guide }}" class="w-20 h-20 rounded-full mx-auto object-cover guide-avatar-ring">
+                    @else
+                        <div class="w-20 h-20 rounded-full mx-auto bg-brand-blue text-white flex items-center justify-center text-2xl font-extrabold guide-avatar-ring">{{ $inisial }}</div>
+                    @endif
                     <h4 class="font-bold text-slate-800 text-lg mt-4">{{ $g->nama_guide }}</h4>
                     <div class="text-xs font-bold text-slate-700 my-2">
                         <i class="fa-solid fa-star text-amber-400"></i> {{ number_format($g->rating, 1) }}
                     </div>
                     <p class="text-xs text-slate-500 line-clamp-3">{{ $g->bio_singkat }}</p>
                     <p class="text-xs text-brand-blue font-semibold mt-3">{{ $g->paket_count }} paket ditangani</p>
-                </div>
+                </a>
             @empty
                 <p class="sm:col-span-2 lg:col-span-4 text-center text-slate-500">Belum ada guide.</p>
             @endforelse
+
+            <div class="sm:col-span-2 lg:col-span-4 text-center mt-4">
+                <a href="{{ route('guides.index') }}"
+                   class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-blue hover:bg-brand-darkBlue text-white font-bold text-sm shadow">
+                    Lihat semua guide <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
         </div>
     </div>
 </section>

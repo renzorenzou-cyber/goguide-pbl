@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Guide\DashboardController as GuideDashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\GuideController;
 use App\Http\Controllers\PaketController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,8 @@ use App\Http\Controllers\Admin\BbmAdminController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/paket/{paket}', [PaketController::class, 'show'])->name('paket.show');
 Route::get('/paket', [PaketController::class, 'index'])->name('paket.index');
+Route::get('/guides',          [GuideController::class, 'index'])->name('guides.index');
+Route::get('/guides/{guide}',  [GuideController::class, 'show'])->name('guides.show');
 // Nama 'guide.daftar' membuat tombol "Daftar sebagai Guide" di beranda otomatis aktif.
 Route::get('/daftar-guide',  [GuideRegistrasiController::class, 'create'])->name('guide.daftar');
 Route::post('/daftar-guide', [GuideRegistrasiController::class, 'store'])->middleware('throttle:6,10')->name('guide.daftar.store');
