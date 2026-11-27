@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use App\Http\Controllers\UlasanController;
 
 class BookingController extends Controller
 {
@@ -26,7 +27,7 @@ class BookingController extends Controller
 
         $wisatawan = $this->wisatawanDari($request->user());
 
-        $bookings = Booking::with(['paket', 'guide'])
+         $bookings = Booking::with(['paket', 'guide', 'ulasan'])
             ->where('id_wisatawan', $wisatawan->id_wisatawan)
             ->orderByDesc('tanggal_transaksi')
             ->paginate(10);

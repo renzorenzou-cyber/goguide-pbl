@@ -40,6 +40,9 @@
                                 <p class="mt-2 font-extrabold text-brand-blue">Rp{{ number_format($b->total_bayar, 0, ',', '.') }}</p>
                             </div>
                         </div>
+                       @if ($b->status === 'selesai' && ! $b->ulasan)
+                            <p class="mt-3 text-xs font-semibold text-brand-orange">&#9733; Tour selesai. Ketuk untuk memberi rating ke guide.</p>
+                        @endif
                         @if ($b->status === 'belum_bayar' && $b->batas_bayar)
                             <p class="mt-3 text-xs font-semibold text-amber-700">
                                 Bayar sebelum {{ $b->batas_bayar->translatedFormat('d M Y H:i') }}

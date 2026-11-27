@@ -126,6 +126,7 @@
                     <div class="rounded-2xl bg-slate-100 border border-slate-200 p-5 text-sm text-slate-700">
                         <p class="font-bold">Tour selesai</p>
                         <p class="mt-1">Terima kasih sudah memakai Go Guide.</p>
+                        @include('partials.ulasan-booking')
                     </div>
                 @elseif ($booking->status === 'dibatalkan')
                     <div class="rounded-2xl bg-red-50 border border-red-200 p-5 text-sm text-red-900">

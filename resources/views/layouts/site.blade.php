@@ -103,6 +103,7 @@
     <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('dashboard') }}" class="gg-link">Dashboard</a>
     @if(auth()->user()->role === 'wisatawan' && Route::has('bookings.index'))
     <a href="{{ route('bookings.index') }}" class="gg-link">Booking Saya</a>
+        <a href="{{ route('ulasan.index') }}" class="gg-link">Ulasan Saya</a>
 @endif
 @php $notifBelumDibaca = \App\Models\Notifikasi::where('id_user', auth()->id())->where('dibaca', false)->count(); @endphp
 <a href="{{ route('notifikasi.index') }}" class="gg-link" style="position:relative;" aria-label="Notifikasi{{ $notifBelumDibaca ? ', ' . $notifBelumDibaca . ' belum dibaca' : '' }}">

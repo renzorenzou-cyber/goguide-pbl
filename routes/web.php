@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\BookingAdminController;
 use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\Admin\FeeAdminController;
 use App\Http\Controllers\Admin\BbmAdminController;
+use App\Http\Controllers\UlasanController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -50,6 +51,9 @@ Route::get('/bookings',                    [BookingController::class, 'index'])-
 Route::get('/bookings/{booking}',          [BookingController::class, 'show'])->name('bookings.show');
 Route::post('/bookings/{booking}/bayar',   [BookingController::class, 'simulasiBayar'])->name('bookings.simulate');
 Route::post('/bookings/{booking}/batal',   [BookingController::class, 'cancel'])->name('bookings.cancel');
+Route::get('/ulasan',                    [UlasanController::class, 'index'])->name('ulasan.index');
+Route::get('/bookings/{booking}/ulasan', [UlasanController::class, 'create'])->name('ulasan.create');
+Route::post('/bookings/{booking}/ulasan',  [UlasanController::class, 'store'])->name('bookings.ulasan');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {

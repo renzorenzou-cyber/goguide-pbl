@@ -62,6 +62,10 @@ class Guide extends Model
     {
         return $this->hasMany(Booking::class, 'id_guide', 'id_guide');
     }
+       public function ulasan()
+    {
+        return $this->hasMany(Ulasan::class, 'id_guide', 'id_guide');
+    }
 
     /** Hasil: [true/false, pesan] */
     public function cekKetersediaan(string $tanggal): array

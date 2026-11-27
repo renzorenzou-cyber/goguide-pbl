@@ -56,4 +56,11 @@ class Booking extends Model
     {
         return $this->hasMany(Notifikasi::class, 'id_booking', 'id_booking');
     }
+        public function ulasan()
+    {
+        return $this->hasOne(Ulasan::class, 'id_booking', 'id_booking');
+    }
+
 }
+    
+
